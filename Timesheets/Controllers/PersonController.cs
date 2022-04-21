@@ -8,6 +8,10 @@ namespace Timesheets.Controllers
     [ApiController]
     public class PersonController : ControllerBase
     {
+        private PersonRepository _repository;
+
+
+
         private static readonly List<Person> data = new List<Person>() {
             new Person { Id = 1, FirstName = "Veda", LastName = "Richmond", Email =
             "ligula@necluctus.edu", Company = "Quisque Ac Libero LLP", Age = 42 },
@@ -110,6 +114,12 @@ namespace Timesheets.Controllers
             new Person { Id = 50, FirstName = "Ramona", LastName = "Gilliam", Email =
             "massa.Vestibulum@lectuspede.ca", Company = "Imperdiet Dictum LLP", Age = 24 },
             };
+
+        public PersonController(PersonRepository repository)
+        {
+            _repository = repository;
+        }
+
         //Поиск по id
         [HttpGet("persons/{id}")]
         public IActionResult GetId([FromRoute] int id)
@@ -167,13 +177,6 @@ namespace Timesheets.Controllers
             {
                 return Ok("ERR");
             }
-            
-            //_repository.Create(new CpuMetric
-            //{
-            //    Time = request.Time,
-            //    Value = request.Value
-            //});
-            return Ok();
         }
         //Редактирование
         [HttpPut("persons/edit")]
@@ -222,6 +225,82 @@ namespace Timesheets.Controllers
             {
                 return Ok("ERR");
             }
+        }
+        //Создание
+        [HttpPost("persons/createDB")]
+        public IActionResult CreateDB([FromBody] Person request)
+        {
+            try
+            {
+                _repository.Create(new PersonDto
+                {
+                    Id = request.Id,
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    Email = request.Email,
+                    Company = request.Company,
+                    Age = request.Age
+                });
+                return Ok("Запись добавлена.");
+            }
+            catch (Exception)
+            {
+                
+                return Ok("ERR");
+            }
+        }
+
+        //Редактиирование
+        [HttpDelete("persons/delete/{Id}")]
+        public IActionResult DelDB([FromRoute] int Id)
+        {
+            try
+            {
+                _repository.Delete(Id);
+                return Ok("Запись удалена.");
+            }
+            catch (Exception)
+            {
+                return Ok("ERR");
+            }
+        }
+        //Поиск по имени
+        [HttpGet("persons/searchTermDB={term}")]
+        public IActionResult GetNameDB([FromRoute] string term)
+        {
+            try
+            {
+               var list= _repository.GetByName(term);
+                return Ok(list);
+            }
+            catch (Exception)
+            {
+                return Ok("ERR");
+            }
+        }
+        //Редактирование
+        [HttpPut("persons/editDB")]
+        public IActionResult EditDB([FromBody] Person request)
+        {
+            try
+            {
+                _repository.UpdateDB(new PersonDto
+                {
+                    Id = request.Id,
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    Email = request.Email,
+                    Company = request.Company,
+                    Age = request.Age
+                });
+
+                return Ok("Запись обновлена.");
+            }
+            catch (Exception)
+            {
+                return Ok("ERR");
+            }
+
         }
 
     }
