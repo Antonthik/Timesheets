@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 
 namespace Timesheets.Controllers
 {
-    [Route("api")]
+    //[Route("api")]
+    [Route("[controller]")]
     [ApiController]
+
+    [Authorize]
     public class PersonController : ControllerBase
     {
         private PersonRepository _repository;
