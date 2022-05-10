@@ -1,15 +1,18 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using Timesheets.Validation;
 
 namespace Timesheets.Controllers
 {
-    //[Route("api")]
-    [Route("[controller]")]
+    
+    [Route("api")]
+    //[Route("[controller]")]
     [ApiController]
 
-    [Authorize]
+    //[Authorize]//активация авторизации
     public class PersonController : ControllerBase
     {
         private PersonRepository _repository;
@@ -234,23 +237,35 @@ namespace Timesheets.Controllers
         [HttpPost("persons/createDB")]
         public IActionResult CreateDB([FromBody] Person request)
         {
-            try
+            PersonValidationService personValidationService = new PersonValidationService();//валидация - собственноручный сервис
+            ValidationResult result = personValidationService.Validate(request); //валидация -класс FluentValidation.Results
+            if (result.IsValid)
             {
-                _repository.Create(new PersonDto
+                try
                 {
-                    Id = request.Id,
-                    FirstName = request.FirstName,
-                    LastName = request.LastName,
-                    Email = request.Email,
-                    Company = request.Company,
-                    Age = request.Age
-                });
-                return Ok("Запись добавлена.");
+                    _repository.Create(new PersonDto
+                    {
+                        Id = request.Id,
+                        FirstName = request.FirstName,
+                        LastName = request.LastName,
+                        Email = request.Email,
+                        Company = request.Company,
+                        Age = request.Age
+                    });
+                    return Ok("Запись добавлена.");
+                }
+                catch (Exception)
+                {
+
+                    return Ok("ERR");
+                }
+
             }
-            catch (Exception)
+            else
             {
-                
-                return Ok("ERR");
+                foreach (ValidationFailure failure in result.Errors)
+                    Console.WriteLine($"{failure.ErrorCode} = {failure.PropertyName} { failure.ErrorMessage}");
+                    return Ok("Валидация не пройдена");
             }
         }
 
