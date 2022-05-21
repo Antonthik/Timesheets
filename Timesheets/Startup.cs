@@ -15,7 +15,7 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Timesheets.DDD;
 
 namespace Timesheets
 {
@@ -34,6 +34,7 @@ namespace Timesheets
         {
             services.AddControllers();           
             ConfigureSqlLiteConnection(services); //Паттерн Repository
+            
             //services.AddSingleton<Person>();
             services.AddScoped<PersonRepository>();
             //services.AddSingleton<IPersonRepository, PersonRepository>();
@@ -118,8 +119,7 @@ namespace Timesheets
 
                 //аутентифакация
                 app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Geekbrains.AuSample v1"));
+                app.UseSwaggerUI(c =>c.SwaggerEndpoint("/swagger/v1/swagger.json", "Geekbrains.AuSample v1"));
             }
 
             //аутентифакация
