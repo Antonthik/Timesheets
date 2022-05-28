@@ -37,6 +37,8 @@ namespace Timesheets
 
             }
         }
+
+
         public void Delete(int id)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
